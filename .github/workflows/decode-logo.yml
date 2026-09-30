@@ -1,0 +1,26 @@
+name: Decode logo
+on:
+  push:
+    branches: [main]
+    paths: ['logo.png.b64']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  decode:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Decode and verify
+        run: |
+          base64 -d logo.png.b64 > logo.png
+          echo "551c9e6b66d638c7ec2614bb456d75643e2f4ec9bc5bbbb81fd1d066c13aa1f3  logo.png" | sha256sum -c -
+      - name: Commit
+        run: |
+          git config user.name "Agnes8888"
+          git config user.email "188365055+Agnes8888@users.noreply.github.com"
+          git rm -q logo.png.b64
+          git rm -q --ignore-unmatch bintest.png
+          git add logo.png
+          git commit -m "Add logo.png (decoded)"
+          git push
